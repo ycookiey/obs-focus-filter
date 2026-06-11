@@ -27,12 +27,10 @@ Advanced Scene Switcher のような汎用自動化ツールではなく、こ�
 
 ## インストール
 
-`obs-focus-filter.dll` を OBS のプラグインディレクトリに配置:
+[Releases](https://github.com/ycookiey/obs-focus-filter/releases) からどちらかを取得:
 
-```
-C:\Program Files\obs-studio\obs-plugins\64bit\obs-focus-filter.dll
-C:\Program Files\obs-studio\data\obs-plugins\obs-focus-filter\locale\*.ini
-```
+- **インストーラ** (`*-windows-x64-Installer.exe`): 実行するだけ。管理者権限は原則不要（`%ProgramData%\obs-studio\plugins\` へ配置）。アンインストールはWindowsの「アプリ」から
+- **zip** (`*-windows-x64.zip`): 中の `obs-focus-filter` フォルダを `%ProgramData%\obs-studio\plugins\` に展開。ポータブル版OBSの場合はOBSフォルダ内の `obs-plugins/64bit` / `data/obs-plugins` 構成に合わせて配置
 
 ## ビルド
 
@@ -43,7 +41,9 @@ cmake --preset windows-x64
 cmake --build --preset windows-x64
 ```
 
-要件: CMake 3.28+ / Visual Studio 2022 以降（このリポジトリのプリセットは VS 2026 / Windows SDK 10.0.26100 を指定。環境に合わせて `CMakePresets.json` を調整）
+要件: CMake 3.28+ / Visual Studio 2022 以降（ローカル用プリセットは VS 2026 / Windows SDK 10.0.26100 を指定。環境に合わせて `CMakePresets.json` を調整。CI用 `windows-ci-x64` は VS 2022）
+
+インストーラ込みのパッケージはタグ push 時に GitHub Actions が生成する（`x.y.z` 形式のタグ → draft release に zip + installer + checksums を添付）。ローカルで作る場合は Inno Setup 6 で `build-aux/installer-Windows.iss` をコンパイル。
 
 ## 対応環境
 

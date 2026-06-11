@@ -17,6 +17,9 @@
 !LICENSE
 !README.md
 
+# Local-only planning notes
+/docs/PLAN.md
+
 # Exclude lock files
 *.lock.json
 

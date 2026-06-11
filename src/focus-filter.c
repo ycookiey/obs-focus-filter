@@ -104,8 +104,7 @@ static HWND resolve_target_window(obs_source_t *parent, bool *has_setting)
 {
 	obs_data_t *settings = obs_source_get_settings(parent);
 	const char *window = obs_data_get_string(settings, "window");
-	enum window_priority priority =
-		(enum window_priority)obs_data_get_int(settings, "priority");
+	enum window_priority priority = (enum window_priority)obs_data_get_int(settings, "priority");
 
 	if (!window || !*window) {
 		*has_setting = false;
@@ -222,16 +221,13 @@ static obs_properties_t *ff_properties(void *data)
 
 	obs_properties_t *props = obs_properties_create();
 
-	obs_property_t *p = obs_properties_add_list(props, "match_mode",
-						    obs_module_text("MatchMode"),
-						    OBS_COMBO_TYPE_LIST,
-						    OBS_COMBO_FORMAT_INT);
+	obs_property_t *p = obs_properties_add_list(props, "match_mode", obs_module_text("MatchMode"),
+						    OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
 	obs_property_list_add_int(p, obs_module_text("MatchMode.Window"), MATCH_WINDOW);
 	obs_property_list_add_int(p, obs_module_text("MatchMode.Process"), MATCH_PROCESS);
 
-	obs_property_t *fade = obs_properties_add_int_slider(props, "fade_ms",
-							     obs_module_text("FadeDuration"),
-							     0, 2000, 10);
+	obs_property_t *fade =
+		obs_properties_add_int_slider(props, "fade_ms", obs_module_text("FadeDuration"), 0, 2000, 10);
 	obs_property_int_set_suffix(fade, " ms");
 
 	return props;

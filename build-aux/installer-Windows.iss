@@ -1,6 +1,5 @@
-; obs-focus-filter installer
-; %ProgramData%\obs-studio\plugins へ展開する（管理者権限は原則不要）。
-; ポータブル版OBSを使う場合はインストーラではなくzipを手動展開すること。
+; Installs into %ProgramData%\obs-studio\plugins. Portable OBS does not load
+; plugins from there, so portable installs use the zip instead.
 
 #ifndef ProjectRoot
   #error ProjectRoot must be defined (/DProjectRoot=...)

@@ -25,14 +25,12 @@ with this program. If not, see <https://www.gnu.org/licenses/>
 #include <util/dstr.h>
 #include <util/windows/window-helpers.h>
 
-/* フォアグラウンド判定の周期(秒)。GetForegroundWindow と EnumWindows は
- * この頻度なら無視できる負荷 */
+/* Seconds between foreground checks. At this rate the cost of GetForegroundWindow
+ * and EnumWindows is negligible. */
 #define CHECK_INTERVAL 0.1f
 
 enum focus_match_mode {
-	/* キャプチャ対象ウィンドウ(とその所有ダイアログ)がフォアグラウンドの時のみ表示 */
 	MATCH_WINDOW = 0,
-	/* 同じプロセスのウィンドウがフォアグラウンドなら表示 */
 	MATCH_PROCESS = 1,
 };
 
@@ -42,7 +40,7 @@ struct focus_filter {
 	bool show;
 	float elapsed;
 
-	/* フェード。alpha は 0(透明)〜1(不透明) を fade_ms かけて遷移する */
+	/* alpha moves between 0 (transparent) and 1 (opaque) over fade_ms. */
 	float fade_ms;
 	float alpha;
 	gs_effect_t *effect;
@@ -66,7 +64,7 @@ static void *ff_create(obs_data_t *settings, obs_source_t *context)
 {
 	struct focus_filter *f = bzalloc(sizeof(struct focus_filter));
 	f->context = context;
-	/* 初回判定までの1フレームに意図しない映像が出ないよう非表示で開始 */
+	/* Start hidden so the frames before the first check show nothing. */
 	f->show = false;
 	f->alpha = 0.0f;
 
@@ -98,8 +96,8 @@ static void ff_destroy(void *data)
 	bfree(f);
 }
 
-/* 親ソースの window 設定("タイトル:クラス:exe")からキャプチャ対象の HWND を
- * OBS本体と同じロジック(ms_find_window)で解決する。設定が無ければ NULL */
+/* Resolves the parent's "window" setting ("title:class:exe") with ms_find_window, the
+ * lookup Game Capture uses. Returns NULL when there is no setting. */
 static HWND resolve_target_window(obs_source_t *parent, bool *has_setting)
 {
 	obs_data_t *settings = obs_source_get_settings(parent);
@@ -139,8 +137,7 @@ static void update_show_state(struct focus_filter *f)
 	HWND target = resolve_target_window(parent, &has_setting);
 
 	if (!has_setting) {
-		/* ウィンドウ指定を持たない親(画面キャプチャや
-		 * フルスクリーンモードのゲームキャプチャ等)には干渉しない */
+		/* Leave sources without a window setting, such as Display Capture, visible. */
 		f->show = true;
 		return;
 	}
@@ -156,7 +153,7 @@ static void update_show_state(struct focus_filter *f)
 		return;
 	}
 
-	/* UWPアプリはフレームウィンドウが前面に来るため実体に読み替える */
+	/* For UWP apps the frame window is in the foreground, not the app's own window. */
 	if (ms_is_uwp_window(fg)) {
 		HWND actual = ms_get_uwp_actual_window(fg);
 		if (actual)
@@ -206,9 +203,8 @@ static void ff_render(void *data, gs_effect_t *effect)
 		return;
 	}
 	if (f->alpha <= 0.0f)
-		return; /* 何も描画しない = 透明 */
+		return;
 
-	/* フェード中: 不透明度を掛けて描画 */
 	if (!obs_source_process_filter_begin(f->context, GS_RGBA, OBS_ALLOW_DIRECT_RENDERING))
 		return;
 	gs_effect_set_float(f->opacity_param, f->alpha);

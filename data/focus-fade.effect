@@ -23,7 +23,7 @@ VertData VSDefault(VertData v_in)
 
 float4 PSFade(VertData v_in) : TARGET
 {
-	/* フィルタ段のテクスチャはpremultiplied alphaのため全チャンネルを等倍する */
+	/* The filter texture has premultiplied alpha, so every channel is scaled. */
 	return image.Sample(textureSampler, v_in.uv) * opacity;
 }
 

@@ -6,7 +6,6 @@
 !/build-aux
 !/cmake
 !/data
-!/docs
 !/src
 !.clang-format
 !.gersemirc
@@ -16,9 +15,7 @@
 !CMakePresets.json
 !LICENSE
 !README.md
-
-# Local-only planning notes
-/docs/PLAN.md
+!README.ja.md
 
 # Exclude lock files
 *.lock.json
